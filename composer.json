@@ -1,0 +1,11 @@
+{
+    "name": "guillaume/cloudy",
+    "description": "A simple php framework build around the foundations of giants",
+    "authors": [
+        {
+            "name": "Guikingone",
+            "email": "guillaume.loulier@hotmail.fr"
+        }
+    ],
+    "require": {}
+}
