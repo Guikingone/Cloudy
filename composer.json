@@ -7,5 +7,15 @@
             "email": "guillaume.loulier@hotmail.fr"
         }
     ],
-    "require": {}
+    "autoload": {
+        "App\\": "app/",
+        "src\\": "src/"
+    },
+    "autoload-dev": {
+        "App\\": "app/",
+        "src\\": "src/"
+    },
+    "require": {
+        "symfony/http-foundation": "^3.1"
+    }
 }
