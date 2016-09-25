@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Core\EventsManager\Model\Events;
+namespace app\Core\EventsManager\Model\Events;
 
-use app\Core\EventsManager\Exception\InvalidEventArgumentException;
 use ArrayAccess;
+use app\Core\EventsManager\Exception\InvalidEventArgumentException;
 
 /**
  * Class Events
@@ -21,7 +21,7 @@ use ArrayAccess;
  *
  * @package App\Core\EventsManager\Model\Events
  */
-class Events
+class Events implements EventsInterface
 {
     /**
      * The name of the event.
@@ -33,7 +33,7 @@ class Events
     /**
      * The trigger who activate the event aka the event who's gonna be launched.
      *
-     * @var string
+     * @var string|object|null
      */
     protected $trigger;
 
@@ -154,7 +154,7 @@ class Events
     public function setArguments($arguments)
     {
         try {
-            if (!is_array($arguments) || !is_object($arguments)) {
+            if (!is_array($arguments) && !is_object($arguments)) {
                 throw new InvalidEventArgumentException(
                     sprintf('The parameters need to be an array or an object, receive "%s"', gettype($arguments)
                     ));
@@ -185,7 +185,7 @@ class Events
     /**
      * Return the state of the propagation.
      *
-     * @return bool
+     * @return bool $stopPropagation
      */
     public function isStopPropagation()
     {

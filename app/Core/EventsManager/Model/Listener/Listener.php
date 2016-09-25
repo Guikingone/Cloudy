@@ -9,13 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace app\Core\EventsManager\Model;
+namespace app\Core\EventsManager\Model\Listener;
 
 /**
  * Class Listener
  * @package app\Core\EventsManager\Model
  */
-class Listener implements \SplObserver
+class Listener
 {
     /**
      * @var string
