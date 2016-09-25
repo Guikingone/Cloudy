@@ -1,5 +1,6 @@
 {
     "name": "guillaume/cloudy",
+    "license": "MIT",
     "description": "A simple php framework build around the foundations of giants",
     "authors": [
         {
@@ -8,14 +9,17 @@
         }
     ],
     "autoload": {
-        "App\\": "app/",
-        "src\\": "src/"
+      "Tests": "tests/",
+      "App\\": "app/",
+      "src\\": "src/"
     },
     "autoload-dev": {
-        "App\\": "app/",
-        "src\\": "src/"
+      "Tests": "tests/",
+      "App\\": "app/",
+      "src\\": "src/"
     },
     "require": {
-        "symfony/http-foundation": "^3.1"
+        "symfony/http-foundation": "^3.1",
+        "react/react": "^0.4.2"
     }
 }
