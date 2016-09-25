@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace app\Core\EventsManager\Model\Events;
+namespace App\Core\EventsManager\Model\Events;
 
 use ArrayAccess;
 

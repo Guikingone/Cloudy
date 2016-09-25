@@ -11,7 +11,7 @@
 
 namespace App\Core\ApplicationManager;
 
-use App\Core\EventsManager\EventManagerInterface;
+use App\Core\EventsManager\Model\EventManager\EventManagerInterface;
 
 /**
  * Interface ApplicationInterface
