@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace app\Core\EventsManager\Model\Listener;
+namespace Cloudy\EventsManager\Model\Listener;
 
 /**
  * Class Listener
- * @package app\Core\EventsManager\Model
+ * @package Cloudy\EventsManager\Model\Listener
  */
 class Listener
 {

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the $PROJECT project.
+ * This file is part of the Cloudy project.
  *
  * (c) Guillaume Loulier <guillaume.loulier@hotmail.fr>
  *
@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\Core\Events;
+namespace Tests\Events;
 
-use App\Core\EventsManager\Model\Events\Events;
 use PHPUnit\Framework\TestCase;
+use Cloudy\EventsManager\Model\Events\Events;
 
 class EventsTest extends TestCase
 {

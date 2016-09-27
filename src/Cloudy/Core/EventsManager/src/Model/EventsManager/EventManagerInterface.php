@@ -11,7 +11,7 @@
 
 namespace App\Core\EventsManager\Model\EventManager;
 
-use app\Core\EventsManager\Model\Events\EventsInterface;
+use Cloudy\EventsManager\Model\Events\EventsInterface;
 
 /**
  * Interface EventManagerInterface

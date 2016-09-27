@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace app\Core\EventsManager\Exception;
+namespace Cloudy\EventsManager\Exception;
 
 class EmptyEventManager extends \Exception
 {

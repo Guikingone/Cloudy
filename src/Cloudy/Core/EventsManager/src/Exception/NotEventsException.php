@@ -9,9 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Core\EventsManager\Model\Listener;
+namespace Cloudy\EventsManager\Exception;
 
-interface ListenerInterface
+
+class NotEventsException extends \Exception
 {
 
 }

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Core\EventsManager\Exception;
+namespace Cloudy\EventsManager\Exception;
 
 class InvalidEventArgumentException extends \Exception
 {

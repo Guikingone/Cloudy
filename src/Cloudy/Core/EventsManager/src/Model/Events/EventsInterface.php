@@ -9,13 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Core\EventsManager\Model\Events;
+namespace Cloudy\EventsManager\Model\Events;
 
 use ArrayAccess;
 
 /**
  * Interface EventsInterface
- * @package app\Core\EventsManager\Model\Events
+ * @package Cloudy\EventsManager\Model\Events
  */
 interface EventsInterface
 {

@@ -9,9 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace app\Core\EventsManager\Exception;
+namespace Cloudy\EventsManager\Exception;
 
-class NotEventManagerException extends \Exception
+
+class NotRunEventsManagerException extends \Exception
 {
 
 }

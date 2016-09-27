@@ -11,14 +11,14 @@
 
 namespace App\Core\EventsManager\Model\EventManager;
 
-use app\Core\EventsManager\Exception\MissingEventNameException;
-use app\Core\EventsManager\Exception\NotEventsException;
-use app\Core\EventsManager\Model\Events\Events;
-use app\Core\EventsManager\Model\Events\EventsInterface;
+use Cloudy\EventsManager\Exception\MissingEventNameException;
+use Cloudy\EventsManager\Exception\NotEventsException;
+use Cloudy\EventsManager\Model\Events\Events;
+use Cloudy\EventsManager\Model\Events\EventsInterface;
 
 /**
  * Class EventsManager
- * @package App\Core\EventsManager
+ * @package Cloudy\EventsManager
  */
 class EventsManager implements EventManagerInterface
 {
@@ -98,7 +98,7 @@ class EventsManager implements EventManagerInterface
 
         foreach ($this->getListenersByEventName($eventName) as $listener) {
             $response = $listener($events);
-            &$responses[$response];
+            $responses[$response];
 
             // If the event was asked to stop propagating, do so
             if ($events->isStopPropagation()) {
@@ -106,8 +106,6 @@ class EventsManager implements EventManagerInterface
                 break;
             }
 
-            // If the result causes our validation callback to return true,
-            // stop propagation
             if ($callback && $callback($response)) {
                 $responses->setStopped(true);
                 break;
@@ -154,6 +152,26 @@ class EventsManager implements EventManagerInterface
 
             if (!array_key_exists($this->events, $eventName)) {
                 return;
+            }
+
+            foreach ($this->events[$eventName] as $priority => $listeners) {
+                foreach ($listeners as $index => $evaluatedListener) {
+                    if ($evaluatedListener !== $listener) {
+                        continue;
+                    }
+
+                    unset($this->events[$eventName][$priority][$index]);
+
+                    if (empty($this->events[$eventName][$priority])) {
+                        unset($this->events[$eventName][$priority]);
+                        break;
+                    }
+                }
+
+                if (empty($this->events[$eventName])) {
+                    unset($this->events[$eventName]);
+                    break;
+                }
             }
         } catch (\InvalidArgumentException $argumentException) {
             $argumentException->getMessage();

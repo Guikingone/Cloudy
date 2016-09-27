@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/../app/autoload.php';
+require __DIR__ . '/../App/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

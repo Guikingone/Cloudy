@@ -1,0 +1,23 @@
+{
+  "name": "guillaume/cloudy",
+  "license": "MIT",
+  "description": "A simple php framework build around the foundations of giants",
+  "authors": [
+    {
+      "name": "Guillaume Loulier",
+      "email": "guillaume.loulier@hotmail.fr"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Cloudy\\EventsManager\\": "src/",
+      "Test\\": "Tests/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Cloudy\\EventsManager\\": "src/",
+      "Test\\": "Tests/"
+    }
+  }
+}

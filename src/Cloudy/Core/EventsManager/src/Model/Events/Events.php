@@ -9,17 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Core\EventsManager\Model\Events;
+namespace Cloudy\EventsManager\Model\Events;
 
 use ArrayAccess;
-use App\Core\EventsManager\Exception\InvalidEventArgumentException;
+use Cloudy\EventsManager\Exception\InvalidEventArgumentException;
 
 /**
  * Class Events
  *
  * Structure of a Event.
  *
- * @package App\Core\EventsManager\Model\Events
+ * @package Cloudy\EventsManager\Model\Events
  */
 class Events implements EventsInterface
 {

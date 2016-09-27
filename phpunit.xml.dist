@@ -2,7 +2,8 @@
 <phpunit colors="true">
     <testsuites>
         <testsuite name="Cloudy Test Suite">
-            <directory>./tests/</directory>
+            <directory>./src/Cloudy/Core/*/Tests/</directory>
+            <directory>./src/Cloudy/Config/*/Tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
