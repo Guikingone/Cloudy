@@ -4,18 +4,30 @@
     "description": "A simple php framework build around the foundations of giants",
     "authors": [
         {
-            "name": "Guikingone",
+            "name": "Guillaume Loulier",
             "email": "guillaume.loulier@hotmail.fr"
         }
     ],
     "autoload": {
       "Tests": "tests/",
-      "App\\": "App/",
+      "App\\Core\\ApplicationManager": "App/Core/ApplicationManager",
+      "App\\Core\\EntityManager": "App/Core/EntityManager",
+      "App\\Core\\EventsManager": "App/Core/EventsManager",
+      "App\\Core\\FormManager": "App/Core/FormManager",
+      "App\\Core\\ServiceManager": "App/Core/ServiceManager",
+      "App\\Core\\ViewManager": "App/Core/ViewManager",
+      "App\\Config": "App/Config",
       "src\\": "src/"
     },
     "autoload-dev": {
       "Tests": "tests/",
-      "App\\": "app/",
+      "App\\Core\\ApplicationManager": "App/Core/ApplicationManager",
+      "App\\Core\\EntityManager": "App/Core/EntityManager",
+      "App\\Core\\EventsManager": "App/Core/EventsManager",
+      "App\\Core\\FormManager": "App/Core/FormManager",
+      "App\\Core\\ServiceManager": "App/Core/ServiceManager",
+      "App\\Core\\ViewManager": "App/Core/ViewManager",
+      "App\\Config": "App/Config",
       "src\\": "src/"
     },
     "require": {

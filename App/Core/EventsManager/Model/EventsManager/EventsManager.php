@@ -60,20 +60,31 @@ class EventsManager implements EventManagerInterface
      */
     public function sendUntil(callable $callback, $eventName, $target = null, array $arguments)
     {
-        // TODO: Implement sendUntil() method.
+        $event = clone $this->eventInterface;
+        $event->setName($eventName);
+        $event->setTrigger($target);
+        $event->setArguments($arguments);
+
+        return $this->sendListeners($event, $callback);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function sendEvent(EventsInterface $events)
     {
-        // TODO: Implement sendEvent() method.
+        return $this->sendListeners($events);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function sendEventUntil(callable $callback, EventsInterface $events)
     {
-        // TODO: Implement sendEventUntil() method.
+        return $this->sendListeners($events, $callback);
     }
 
-    public function sendListeners(EventsInterface $events, callable $callback = null)
+    protected function sendListeners(EventsInterface $events, callable $callback = null)
     {
         $eventName = $events->getName();
 
@@ -82,6 +93,28 @@ class EventsManager implements EventManagerInterface
         }
 
         $events->stopPropagation(false);
+
+        $responses = [];
+
+        foreach ($this->getListenersByEventName($eventName) as $listener) {
+            $response = $listener($events);
+            &$responses[$response];
+
+            // If the event was asked to stop propagating, do so
+            if ($events->isStopPropagation()) {
+                $responses->setStopped(true);
+                break;
+            }
+
+            // If the result causes our validation callback to return true,
+            // stop propagation
+            if ($callback && $callback($response)) {
+                $responses->setStopped(true);
+                break;
+            }
+        }
+
+        return $responses;
     }
 
     /**
@@ -107,7 +140,24 @@ class EventsManager implements EventManagerInterface
      */
     public function detach(callable $listener, $eventName = null)
     {
-        // TODO: Implement detach() method.
+        try {
+            if (null === $eventName || '*' === $eventName ) {
+                foreach ($this->events as $event) {
+                    $this->detach($listener, $event);
+                }
+                return;
+            }
+
+            if (!is_string($eventName)) {
+                throw new \InvalidArgumentException('Expected a string, given "%s"', gettype($eventName));
+            }
+
+            if (!array_key_exists($this->events, $eventName)) {
+                return;
+            }
+        } catch (\InvalidArgumentException $argumentException) {
+            $argumentException->getMessage();
+        }
     }
 
     /**
@@ -118,5 +168,31 @@ class EventsManager implements EventManagerInterface
         if (array_key_exists($this->events, $event)) {
             unset($this->events[$event]);
         }
+    }
+
+    /**
+     * Get listeners for the currently send event.
+     *
+     * @param  string $eventName
+     * @return callable[]
+     */
+    protected function getListenersByEventName($eventName)
+    {
+        $listeners = array_merge_recursive(
+            array_key_exists($this->events, $eventName) ? $this->events[$eventName] : [],
+            array_key_exists($this->events, '*') ? $this->events['*'] : []
+        );
+
+        krsort($listeners, SORT_NUMERIC);
+
+        $listenersForEvent = [];
+
+        foreach ($listeners as $priority => $listenersByPriority) {
+            foreach ($listenersByPriority as $listener) {
+                $listenersForEvent[] = $listener;
+            }
+        }
+
+        return $listenersForEvent;
     }
 }

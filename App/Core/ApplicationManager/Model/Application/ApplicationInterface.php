@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Core\ApplicationManager;
+namespace App\Core\ApplicationManager\Model\Application;
 
 use App\Core\EventsManager\Model\EventManager\EventManagerInterface;
 

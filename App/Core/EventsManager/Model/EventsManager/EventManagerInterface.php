@@ -20,7 +20,15 @@ use app\Core\EventsManager\Model\Events\EventsInterface;
 interface EventManagerInterface
 {
     /**
-     * Create and send a Event.
+     * Use this method in order to initialize a new Event.
+     *
+     * This method allow to create a event and send him with all the listeners linked to this Event.
+     *
+     * Required :
+     *
+     * - The name of the Event.
+     * - The target of the Event.
+     * - The arguments asked by the Event (can be null).
      *
      * @param string $eventName
      * @param null|string|object $target
@@ -30,7 +38,16 @@ interface EventManagerInterface
     public function send($eventName, $target = null, array $arguments);
 
     /**
-     * Allow to send a Event until something happen.
+     * Use this method to initialize a new Event with 'n' callbacks.
+     *
+     * This method allow to create a event and send him with all the listeners linked to this event.
+     *
+     * Required :
+     *
+     * - The name of the Event.
+     * - The target of the Event.
+     * - The arguments asked by the Event (can be null).
+     * - The callbacks who's gonna be notified about the Event.
      *
      * @param callable $callback
      * @param string $eventName
@@ -42,7 +59,12 @@ interface EventManagerInterface
     public function sendUntil(callable $callback, $eventName, $target = null, array $arguments);
 
     /**
-     * Send a Event using EventsInterface instance.
+     * Send a Event using EventsInterface instance, in order to be effective, all the listeners linked to this Event
+     * are send in the same time.
+     *
+     * Required :
+     *
+     * - The name of the Event.
      *
      * @param EventsInterface $events
      *
@@ -51,6 +73,14 @@ interface EventManagerInterface
     public function sendEvent(EventsInterface $events);
 
     /**
+     * Send a Event using EventsInterface instance, each listeners are passed to the callback and stored as listeners,
+     * if the name of the Event is missing, a Exception is throw.
+     *
+     * Required :
+     *
+     * - The name of the Event.
+     * - The callbacks linked to this Event.
+     *
      * @param callable $callback
      * @param EventsInterface $events
      * @return mixed
