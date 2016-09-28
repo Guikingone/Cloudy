@@ -58,7 +58,7 @@ class Events implements EventsInterface
      *
      * @param string $name
      * @param array|ArrayAccess $arguments
-     * @param string|object $trigger
+     * @param null|string|object $trigger
      */
     public function __construct($name = null, $arguments = null, $trigger = null)
     {

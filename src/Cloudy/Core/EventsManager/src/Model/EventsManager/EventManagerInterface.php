@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Core\EventsManager\Model\EventManager;
+namespace Cloudy\EventsManager\Model\EventManager;
 
 use Cloudy\EventsManager\Model\Events\EventsInterface;
 
