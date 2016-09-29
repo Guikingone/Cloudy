@@ -119,4 +119,11 @@ interface EventManagerInterface
      * @return void
      */
     public function clearListeners($eventName);
+
+    /**
+     * Allow to get all the Events stocked in the EventsManager.
+     *
+     * @return array
+     */
+    public function getEvents();
 }

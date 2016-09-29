@@ -25,10 +25,10 @@ class EventsTest extends TestCase
      */
     public function testBootEvents()
     {
-        $events = new Events('Hello World', [], 'onBoot');
-        static::assertEquals('Hello World', $events->getName());
-        static::assertEquals([], $events->getArguments());
-        static::assertEquals('onBoot', $events->getTrigger());
+        $events = new Events('Hello World', ['onInit', 'onBoot'], 'onBoot');
+        static::assertContains('Hello World', $events->getName());
+        static::assertContains('onInit', $events->getArguments());
+        static::assertContains('onBoot', $events->getTrigger());
     }
 
     /**
@@ -37,7 +37,8 @@ class EventsTest extends TestCase
     public function testEventsName()
     {
         $events = new Events('onBoot', ['onBoot', 'onInit'], 'onBoot');
-        static::assertEquals('onBoot', $events->getName());
+        $events->setName('onRouterInit');
+        static::assertContains('onRouterInit', $events->getName());
     }
 
     /**
@@ -46,7 +47,8 @@ class EventsTest extends TestCase
     public function testEventsArguments()
     {
         $events = new Events('onInit', ['onBoot', 'onInit', 'onEventsManagerRun'], 'onInit');
-        static::assertEquals(['onBoot', 'onInit', 'onEventsManagerRun'], $events->getArguments());
+        $events->setArguments(['onRouterInit', 'onResponseSend']);
+        static::assertEquals(['onRouterInit', 'onResponseSend'], $events->getArguments());
     }
 
     /**
@@ -64,6 +66,17 @@ class EventsTest extends TestCase
     public function testEventsTrigger()
     {
         $events = new Events('onInit', ['onBoot', 'onInit', 'onEventsManagerRun'], 'onInit');
-        static::assertEquals('onInit', $events->getTrigger());
+        $events->setTrigger('onRouterInit');
+        static::assertContains('onRouterInit', $events->getTrigger());
+    }
+
+    /**
+     * Test if the Events can stop the propagation and if the return's correct.
+     */
+    public function testEventsStopPropagation()
+    {
+        $events = new Events('onInit', ['onInit', 'onBoot'], 'onInit');
+        $events->stopPropagation(true);
+        static::assertEquals(true, $events->isStopPropagation());
     }
 }

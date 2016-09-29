@@ -11,6 +11,7 @@
 
 namespace Cloudy\EventsManager\Model\EventManager;
 
+use Cloudy\Core\EventsManager\src\Exception\MissingEventsParametersException;
 use Cloudy\EventsManager\Exception\MissingEventNameException;
 use Cloudy\EventsManager\Exception\NotEventsException;
 use Cloudy\EventsManager\Model\Events\Events;
@@ -116,6 +117,23 @@ class EventsManager implements EventManagerInterface
     }
 
     /**
+     *  Allow to send all the Events and Listeners.
+     */
+    protected function sendAll()
+    {
+        try {
+            foreach ($this->events as $event) {
+                if (!$event->getname() || !$event->getTrigger() || $event->getArguments()) {
+                    throw new MissingEventsParametersException();
+                }
+                $this->send($event->getName(), $event->getTrigger(), $event->getArguments());
+            }
+        } catch (MissingEventsParametersException $missingEventsParametersException) {
+            $missingEventsParametersException->getMessage();
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function attach($eventName, callable $listener, $priority)
@@ -212,5 +230,21 @@ class EventsManager implements EventManagerInterface
         }
 
         return $listenersForEvent;
+    }
+
+    /**
+     * @param EventsInterface $eventInterface
+     */
+    public function setEventInterface($eventInterface)
+    {
+        $this->eventInterface = $eventInterface;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEvents()
+    {
+        return $this->events;
     }
 }
