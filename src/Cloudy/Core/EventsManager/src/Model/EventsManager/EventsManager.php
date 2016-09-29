@@ -11,11 +11,14 @@
 
 namespace Cloudy\EventsManager\Model\EventManager;
 
+use Cloudy\Core\EventsManager\src\Exception\EmptyListenerException;
 use Cloudy\Core\EventsManager\src\Exception\MissingEventsParametersException;
+use Cloudy\Core\EventsManager\src\Exception\NotListenerException;
 use Cloudy\EventsManager\Exception\MissingEventNameException;
 use Cloudy\EventsManager\Exception\NotEventsException;
 use Cloudy\EventsManager\Model\Events\Events;
 use Cloudy\EventsManager\Model\Events\EventsInterface;
+use Cloudy\EventsManager\Model\Listener\Listener;
 
 /**
  * Class EventsManager
@@ -24,11 +27,18 @@ use Cloudy\EventsManager\Model\Events\EventsInterface;
 class EventsManager implements EventManagerInterface
 {
     /**
-     * The array containing the Event and the Listener linked.
+     * The array containing the Events.
      *
      * @var array
      */
     protected $events = [];
+
+    /**
+     * The array containing the Listeners.
+     *
+     * @var array
+     */
+    protected $listeners = [];
 
     /**
      * @var EventsInterface
@@ -59,14 +69,14 @@ class EventsManager implements EventManagerInterface
     /**
      * @inheritdoc
      */
-    public function sendUntil(callable $callback, $eventName, $target = null, array $arguments)
+    public function sendUntil(Listener $listener, $eventName, $target = null, array $arguments)
     {
         $event = clone $this->eventInterface;
         $event->setName($eventName);
         $event->setTrigger($target);
         $event->setArguments($arguments);
 
-        return $this->sendListeners($event, $callback);
+        return $this->sendListeners($event, $listener);
     }
 
     /**
@@ -80,12 +90,12 @@ class EventsManager implements EventManagerInterface
     /**
      * @inheritdoc
      */
-    public function sendEventUntil(callable $callback, EventsInterface $events)
+    public function sendEventUntil(Listener $listener, EventsInterface $events)
     {
-        return $this->sendListeners($events, $callback);
+        return $this->sendListeners($events, $listener);
     }
 
-    protected function sendListeners(EventsInterface $events, callable $callback = null)
+    protected function sendListeners(EventsInterface $events, Listener $listener)
     {
         $eventName = $events->getName();
 
@@ -94,26 +104,6 @@ class EventsManager implements EventManagerInterface
         }
 
         $events->stopPropagation(false);
-
-        $responses = [];
-
-        foreach ($this->getListenersByEventName($eventName) as $listener) {
-            $response = $listener($events);
-            $responses[$response];
-
-            // If the event was asked to stop propagating, do so
-            if ($events->isStopPropagation()) {
-                $responses->setStopped(true);
-                break;
-            }
-
-            if ($callback && $callback($response)) {
-                $responses->setStopped(true);
-                break;
-            }
-        }
-
-        return $responses;
     }
 
     /**
@@ -136,74 +126,84 @@ class EventsManager implements EventManagerInterface
     /**
      * @inheritdoc
      */
-    public function attach($eventName, callable $listener, $priority)
+    public function attach($eventName, Listener $listener, $priority)
     {
         try {
             if (!is_string($eventName)) {
                 throw new NotEventsException();
             }
-            $this->events[$eventName][(int) $priority][] = $listener;
+
+            if (!$listener instanceof Listener) {
+                throw new NotListenerException();
+            }
+
+            $this->listeners[$eventName][(int) $priority][] = $listener;
 
             return $listener;
 
         } catch (NotEventsException $eventsException) {
             $eventsException->getMessage();
+        } catch (NotListenerException $listenerException) {
+            $listenerException->getMessage();
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function detach(callable $listener, $eventName = null)
+    public function detach($eventName = null, Listener $listener)
     {
         try {
             if (null === $eventName || '*' === $eventName ) {
-                foreach ($this->events as $event) {
-                    $this->detach($listener, $event);
-                }
-                return;
+                throw new EmptyListenerException();
             }
 
             if (!is_string($eventName)) {
                 throw new \InvalidArgumentException('Expected a string, given "%s"', gettype($eventName));
             }
 
-            if (!array_key_exists($this->events, $eventName)) {
+            if (!array_key_exists($eventName, $this->events)) {
                 return;
             }
 
-            foreach ($this->events[$eventName] as $priority => $listeners) {
-                foreach ($listeners as $index => $evaluatedListener) {
-                    if ($evaluatedListener !== $listener) {
-                        continue;
+            foreach ($this->events as $event => $listeners) {
+                foreach ($listeners as $index => $linkedListener) {
+                    if (null === $linkedListener) {
+                        throw new EmptyListenerException();
                     }
 
-                    unset($this->events[$eventName][$priority][$index]);
-
-                    if (empty($this->events[$eventName][$priority])) {
-                        unset($this->events[$eventName][$priority]);
-                        break;
-                    }
+                    unset($this->events[$index]);
                 }
 
                 if (empty($this->events[$eventName])) {
-                    unset($this->events[$eventName]);
                     break;
                 }
+
+                unset($this->events[$event]);
             }
         } catch (\InvalidArgumentException $argumentException) {
             $argumentException->getMessage();
+        } catch (EmptyListenerException $emptyListenerException) {
+            $emptyListenerException->getMessage();
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function clearListeners($event)
+    public function clearListeners($listener)
     {
-        if (array_key_exists($this->events, $event)) {
-            unset($this->events[$event]);
+        if (array_key_exists($this->listeners, $listener)) {
+            unset($this->listeners[$listener]);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function clearAllListeners()
+    {
+        $this->events = [];
     }
 
     /**
@@ -212,7 +212,7 @@ class EventsManager implements EventManagerInterface
      * @param  string $eventName
      * @return callable[]
      */
-    protected function getListenersByEventName($eventName)
+    public function getListenersByEventName($eventName)
     {
         $listeners = array_merge_recursive(
             array_key_exists($this->events, $eventName) ? $this->events[$eventName] : [],
@@ -223,8 +223,8 @@ class EventsManager implements EventManagerInterface
 
         $listenersForEvent = [];
 
-        foreach ($listeners as $priority => $listenersByPriority) {
-            foreach ($listenersByPriority as $listener) {
+        foreach ($listeners as $priority => $listenerEvents) {
+            foreach ($listenerEvents as $listener) {
                 $listenersForEvent[] = $listener;
             }
         }
@@ -246,5 +246,13 @@ class EventsManager implements EventManagerInterface
     public function getEvents()
     {
         return $this->events;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getListeners()
+    {
+        return $this->listeners;
     }
 }

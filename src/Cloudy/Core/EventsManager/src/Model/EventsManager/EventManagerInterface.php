@@ -12,6 +12,7 @@
 namespace Cloudy\EventsManager\Model\EventManager;
 
 use Cloudy\EventsManager\Model\Events\EventsInterface;
+use Cloudy\EventsManager\Model\Listener\Listener;
 
 /**
  * Interface EventManagerInterface
@@ -49,14 +50,14 @@ interface EventManagerInterface
      * - The arguments asked by the Event (can be null).
      * - The callbacks who's gonna be notified about the Event.
      *
-     * @param callable $callback
+     * @param Listener $listener
      * @param string $eventName
      * @param null|string|object $target
      * @param array|object $arguments
      *
      * @return mixed
      */
-    public function sendUntil(callable $callback, $eventName, $target = null, array $arguments);
+    public function sendUntil(Listener $listener, $eventName, $target = null, array $arguments);
 
     /**
      * Send a Event using EventsInterface instance, in order to be effective, all the listeners linked to this Event
@@ -81,11 +82,11 @@ interface EventManagerInterface
      * - The name of the Event.
      * - The callbacks linked to this Event.
      *
-     * @param callable $callback
+     * @param Listener $listener
      * @param EventsInterface $events
      * @return mixed
      */
-    public function sendEventUntil(callable $callback, EventsInterface $events);
+    public function sendEventUntil(Listener $listener, EventsInterface $events);
 
     /**
      * Attach a Listener to a Events, you can add a priority to this listener.
@@ -94,31 +95,36 @@ interface EventManagerInterface
      * priority is locked between 1 and 20, 1 can be considered as the most important Listener and 20, the less important.
      *
      * @param string $eventName
-     * @param callable $listener
+     * @param Listener $listener
      * @param integer $priority
      *
      * @return callable
      */
-    public function attach($eventName, callable $listener, $priority);
+    public function attach($eventName, Listener $listener, $priority);
 
     /**
      * Detach a Listener from a Event or from all the Events launched.
      *
-     * @param callable $listener
      * @param null|string $eventName
+     * @param Listener $listener
      *
      * @return void
      */
-    public function detach(callable $listener, $eventName = null);
+    public function detach($eventName = null, Listener $listener);
 
     /**
      * Clear all the Listeners linked to a Event.
      *
-     * @param $eventName
+     * @param string $listener
      *
      * @return void
      */
-    public function clearListeners($eventName);
+    public function clearListeners($listener);
+
+    /**
+     *  Allow to clear all the listeners.
+     */
+    public function clearAllListeners();
 
     /**
      * Allow to get all the Events stocked in the EventsManager.
@@ -126,4 +132,11 @@ interface EventManagerInterface
      * @return array
      */
     public function getEvents();
+
+    /**
+     * Allow to get all the listeners stocked into the EventsManager.
+     *
+     * @return array
+     */
+    public function getListeners();
 }
